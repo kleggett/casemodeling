@@ -9,3 +9,5 @@ libraryDependencies += "org.apache.commons" % "commons-lang3" % "3.4"
 libraryDependencies += "org.mongodb" % "casbah_2.11" % "2.8.1"
 
 libraryDependencies += "org.mongojack" % "mongojack" % "2.3.0"
+
+libraryDependencies += "org.scalatest" % "scalatest_2.11" % "2.2.5"
