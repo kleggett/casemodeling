@@ -33,17 +33,17 @@ class JdbcTruckDAO(override val connection: Connection)
   override protected val getByIdSQL = "select * from trucks where vin = ?"
 
   override protected def populate(rs: ResultSet): Truck = {
-    Truck(Option(rs.getString("vin")), rs.getString("make"), rs.getString("model"),
+    Truck(rs.getString("vin"), rs.getString("make"), rs.getString("model"),
           rs.getInt("weight"), rs.getInt("num_wheels"))
   }
 
   override protected def prepInsert(t: Truck): (PreparedStatement) => Unit = {
     (ps: PreparedStatement) => {
-      ps.setString(1, t.id)
+      ps.setString(1, t.vin)
       ps.setString(2, t.make)
       ps.setString(3, t.model)
       ps.setInt(4, t.weight)
-      ps.setInt(5, t.numWheels)
+      ps.setInt(5, t.nWheels)
     }
   }
 
@@ -52,10 +52,14 @@ class JdbcTruckDAO(override val connection: Connection)
       ps.setString(1, t.make)
       ps.setString(2, t.model)
       ps.setInt(3, t.weight)
-      ps.setInt(4, t.numWheels)
-      ps.setString(5, t.id)
+      ps.setInt(4, t.nWheels)
+      ps.setString(5, t.vin)
     }
   }
 
   override protected def prepId(id: String): (PreparedStatement) => Unit = prepSingleString(id)
+
+  override def populateIdIfNeeded(obj: Truck, id: () => String): Truck = {
+    if (obj.persisted) obj else obj.copy(id())
+  }
 }

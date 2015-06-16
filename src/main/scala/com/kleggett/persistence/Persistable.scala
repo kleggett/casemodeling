@@ -1,29 +1,14 @@
 package com.kleggett.persistence
 
 /**
- * This trait marks those objects that can be persisted.
+ * This trait marks those objects that can be persisted and indicates their current state.
  *
  * @author K. Leggett
- * @since 1.1 (6/8/15 8:47 PM)
+ * @since 1.0 (6/8/15 8:47 PM)
  */
-trait Persistable[A <: Any]
+trait Persistable[ID <: Any]
 {
-  def id: A
+  def id: Option[ID]
 
-  def id_=(value: A): Unit
-
-  def idAsOption: Option[A] = if (persisted) Some(id) else None
-
-  /**
-   * Returns true if this object is "persisted"; false otherwise.
-   * @return true if the object is persisted; false if it is not
-   */
-  def persisted: Boolean
-
-  def idEquals(other: Any) = other match {
-    case that: Persistable[A] => this.id == that.id
-    case _ => false
-  }
-
-  def idHashCode() = if (idAsOption.isDefined) id.hashCode() else 0
+  def persisted: Boolean = id.isDefined
 }

@@ -31,7 +31,7 @@ trait MongoCrudDAOTest[ID, M <: Persistable[ID]] extends BaseTest with MongoSupp
 
     it("should force insert new data properly") {
       val model = testData()
-      dao.populateIdIfNeeded(model)
+      dao.populateIdIfNeeded(model, dao.generateId _)
       val actual = dao.save(model, true)
       assert(actual != null)
       assert(actual.persisted)
@@ -41,8 +41,7 @@ trait MongoCrudDAOTest[ID, M <: Persistable[ID]] extends BaseTest with MongoSupp
 
     it("should update existing data properly") {
       val existing = existingData
-      val update = updateData()
-      update.id = existing.id
+      val update = dao.populateIdIfNeeded(updateData(), () => { existing.id.get })
       val actual = dao.save(update)
       assert(actual != null)
       assert(actual.persisted)
@@ -52,22 +51,22 @@ trait MongoCrudDAOTest[ID, M <: Persistable[ID]] extends BaseTest with MongoSupp
 
     it("should find data properly") {
       val existing = existingData
-      val actual = dao.getById(existing.id)
+      val actual = dao.getById(existing.id.get)
       assert(actual.isDefined)
       assertEquals(actual.get, existing)
     }
 
     it("should delete data properly") {
       val existing = existingData
-      dao.deleteById(existing.id)
-      assert(dao.getById(existing.id).isEmpty)
+      dao.deleteById(existing.id.get)
+      assert(dao.getById(existing.id.get).isEmpty)
     }
   }
 
   def existingData: M = dao.save(testData())
 
   def findEquals(obj: M) {
-    dao.getById(obj.id) match {
+    dao.getById(obj.id.get) match {
       case None => fail("Failed to find: " + obj)
       case Some(x) => assertEquals(x, obj)
     }

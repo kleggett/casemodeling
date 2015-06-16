@@ -18,18 +18,18 @@ trait MongoCrudDAO[ID, M <: Persistable[ID]] extends MongoDAO[ID, M] with CrudDA
   }
 
   override def save(obj: M, forceInsert: Boolean): M = {
-    populateIdIfNeeded(obj)
+    val populated = populateIdIfNeeded(obj, generateId _)
     val rs = {
       if (forceInsert) {
         concernOverride match {
-          case Some(c) => collection.insert(obj, c)
-          case None => collection.insert(obj)
+          case Some(c) => collection.insert(populated, c)
+          case None => collection.insert(populated)
         }
       }
       else {
         concernOverride match {
-          case Some(c) => collection.save(obj, c)
-          case None => collection.save(obj)
+          case Some(c) => collection.save(populated, c)
+          case None => collection.save(populated)
         }
       }
     }
@@ -39,11 +39,11 @@ trait MongoCrudDAO[ID, M <: Persistable[ID]] extends MongoDAO[ID, M] with CrudDA
   override def saveBatch(batch: Traversable[M], forceInsert: Boolean): Traversable[M] = {
     import scala.collection.JavaConversions._
     var rs: org.mongojack.WriteResult[M, ID] = null
-    batch.foreach(populateIdIfNeeded)
     if (forceInsert) {
+      val populated = batch.map(m => populateIdIfNeeded(m, generateId _))
       concernOverride match {
-        case Some(c) => rs = collection.insert(batch.toList, c)
-        case None => rs = collection.insert(batch.toList)
+        case Some(c) => rs = collection.insert(populated.toList, c)
+        case None => rs = collection.insert(populated.toList)
       }
       rs.getSavedObjects.toList
     }

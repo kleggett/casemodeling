@@ -13,4 +13,8 @@ class MongoCarDAO(override val db: MongoDB, override val collectionName: String 
   extends MongoVehicleDAO[Car]
 {
   override protected def modelClass = classOf[Car]
+
+  override def populateIdIfNeeded(obj: Car, id: () => String): Car = {
+    if (obj.persisted) obj else obj.copy(id())
+  }
 }

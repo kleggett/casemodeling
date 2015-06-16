@@ -18,5 +18,5 @@ trait CrudDAO[ID, M <: Persistable[ID]]
 
   def generateId: ID
 
-  def populateIdIfNeeded(obj: M): Unit = if (!obj.persisted) obj.id_=(generateId)
+  def populateIdIfNeeded(obj: M, id: () => ID): M
 }

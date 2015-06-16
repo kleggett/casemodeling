@@ -1,7 +1,6 @@
 package com.kleggett.examples.modeling.model
 
 import com.kleggett.persistence.Persistable
-import org.apache.commons.lang3.StringUtils
 
 import scala.util.Random
 
@@ -13,13 +12,11 @@ import scala.util.Random
  */
 sealed trait Vehicle
 {
-  var vin: Option[String]
+  def vin: String
 
   def make: String
 
   def model: String
-
-  def weight: Int
 }
 
 object Vehicle
@@ -27,17 +24,13 @@ object Vehicle
   def newVIN() = Random.nextString(17)
 }
 
-trait PersistableVehicle extends Vehicle with Persistable[String]
+trait DBVehicle extends Vehicle with Persistable[String]
 {
-  override def id_=(value: String): Unit = vin = Option(StringUtils.trimToNull(value))
-
-  override def id: String = vin.orNull
-
-  override def persisted: Boolean = vin.isDefined
+  override def id: Option[String] = Option(vin)
 }
 
-case class Car(override var vin: Option[String], make: String, model: String, weight: Int, numDoors: Int)
-  extends PersistableVehicle
+case class Car(vin: String, make: String, model: String, nDoors: Int)
+  extends DBVehicle
 
-case class Truck(override var vin: Option[String], make: String, model: String, weight: Int, numWheels: Int)
-  extends PersistableVehicle
+case class Truck(vin: String, make: String, model: String, weight: Int, nWheels: Int)
+  extends DBVehicle

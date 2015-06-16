@@ -29,8 +29,8 @@ trait JdbcCrudDAO[ID, M <: Persistable[ID]] extends JdbcDAO[ID, M] with CrudDAO[
 
   override def save(obj: M, forceInsert: Boolean): M = {
     if (forceInsert || !obj.persisted) {
-      populateIdIfNeeded(obj)
-      executeUpdate(connection, insertSQL, prepInsert(obj))
+      val populated = populateIdIfNeeded(obj, generateId _)
+      executeUpdate(connection, insertSQL, prepInsert(populated))
     }
     else {
       executeUpdate(connection, updateSQL, prepUpdate(obj))
@@ -55,7 +55,8 @@ trait JdbcCrudDAO[ID, M <: Persistable[ID]] extends JdbcDAO[ID, M] with CrudDAO[
   }
 
   def insertBatch(batch: Traversable[M]): Unit = {
-    executeBatch(connection, insertSQL, batch.toList, (obj: M, ps: PreparedStatement) => prepInsert(obj))
+    val populated = batch.map(m => populateIdIfNeeded(m, generateId _))
+    executeBatch(connection, insertSQL, populated.toList, (obj: M, ps: PreparedStatement) => prepInsert(obj))
   }
 
   def updateBatch(batch: Traversable[M]): Unit = {
