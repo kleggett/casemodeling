@@ -8,7 +8,11 @@ package com.kleggett.persistence
  */
 trait Persistable[ID <: Any]
 {
+  type ModelType <: Persistable[ID]
+
   def id: Option[ID]
+
+  def withId(newId: ID): ModelType
 
   def persisted: Boolean = id.isDefined
 }

@@ -10,8 +10,12 @@ import scala.util.Random
  * @author K. Leggett
  * @since 1.0 (6/7/15 4:55 PM)
  */
-sealed trait Vehicle
+sealed trait Vehicle extends Persistable[String]
 {
+  override type ModelType <: Vehicle
+
+  override def id: Option[String] = Option(vin)
+
   def vin: String
 
   def make: String
@@ -24,13 +28,11 @@ object Vehicle
   def newVIN() = Random.nextString(17)
 }
 
-trait DBVehicle extends Vehicle with Persistable[String]
+case class Car(vin: String, make: String, model: String, nDoors: Int)
+  extends Vehicle
 {
-  override def id: Option[String] = Option(vin)
+  override type ModelType = Car
+
+  override def withId(newId: String): Car = copy(vin = newId)
 }
 
-case class Car(vin: String, make: String, model: String, nDoors: Int)
-  extends DBVehicle
-
-case class Truck(vin: String, make: String, model: String, weight: Int, nWheels: Int)
-  extends DBVehicle

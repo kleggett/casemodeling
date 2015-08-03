@@ -1,6 +1,6 @@
 package com.kleggett.persistence.mongo
 
-import com.mongodb.casbah.MongoDB
+import com.mongodb.casbah.{MongoClient, MongoDB}
 import org.scalatest.{BeforeAndAfterEach, Suite}
 
 /**
@@ -23,5 +23,5 @@ trait MongoSupport extends BeforeAndAfterEach
     db.getCollectionNames().filterNot(_.contains("system.")).foreach(c => db.getCollection(c).drop())
   }
 
-  protected[this] def db: MongoDB = ???
+  protected[this] def db: MongoDB = MongoDB(MongoClient("localhost"), "casemodeling")
 }

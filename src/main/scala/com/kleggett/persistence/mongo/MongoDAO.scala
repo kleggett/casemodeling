@@ -34,8 +34,8 @@ object MongoDAO
 
   def results[M](rs: DBCursor[M]): List[M] = {
     var results: List[M] = Nil
-    while (rs.hasNext) results = results :+ rs.next()
-    results
+    while (rs.hasNext) results = rs.next() :: results
+    results.reverse
   }
 
   def queryByName[M <: Persistable[_]](coll: JacksonDBCollection[M, _], name: String, fieldName: String = "name"): Option[M] = {

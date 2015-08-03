@@ -18,7 +18,7 @@ trait JdbcDAO[ID, M <: Persistable[ID]]
 
   def results(rs: ResultSet): List[M] = {
     var results: List[M] = Nil
-    while (rs.next()) results = results :+ populate(rs)
-    results
+    while (rs.next()) results = populate(rs) :: results
+    results.reverse
   }
 }

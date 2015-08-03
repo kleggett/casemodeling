@@ -19,15 +19,9 @@ trait CachedMongoCrudDAO[ID, M <: Persistable[ID]] extends MongoCrudDAO[ID, M]
   }
 
   override def save(obj: M, forceInsert: Boolean): M = {
-    val x = super.save(obj, forceInsert)
-    removeObjectFromCaches(x)
-    x
-  }
-
-  override def saveBatch(batch: Traversable[M], forceInsert: Boolean): Traversable[M] = {
-    val xs = super.saveBatch(batch, forceInsert)
-    xs.foreach(x => removeObjectFromCaches(x))
-    xs
+    val saved = super.save(obj, forceInsert)
+    removeObjectFromCaches(saved)
+    saved
   }
 
   override def drop() {

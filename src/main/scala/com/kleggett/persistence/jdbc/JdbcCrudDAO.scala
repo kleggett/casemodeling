@@ -27,39 +27,22 @@ trait JdbcCrudDAO[ID, M <: Persistable[ID]] extends JdbcDAO[ID, M] with CrudDAO[
 
   protected def prepId(id: ID): (PreparedStatement) => Unit
 
-  override def save(obj: M, forceInsert: Boolean): M = {
-    if (forceInsert || !obj.persisted) {
-      val populated = populateIdIfNeeded(obj, generateId _)
-      executeUpdate(connection, insertSQL, prepInsert(populated))
-    }
-    else {
-      executeUpdate(connection, updateSQL, prepUpdate(obj))
-    }
-    obj
-  }
-
-  override def saveBatch(batch: Traversable[M], forceInsert: Boolean): Traversable[M] = {
-    if (forceInsert) {
-      insertBatch(batch)
-      batch
-    }
-    else batch.map(x => save(x, forceInsert))
+  override def getById(id: ID): Option[M] = {
+    executeQuery(connection, getByIdSQL, prepId(id), populate _).headOption
   }
 
   override def deleteById(id: ID): Int = {
     executeUpdate(connection, deleteByIdSQL, prepId(id))
   }
 
-  override def getById(id: ID): Option[M] = {
-    executeQuery(connection, getByIdSQL, prepId(id), populate _).headOption
-  }
-
-  def insertBatch(batch: Traversable[M]): Unit = {
-    val populated = batch.map(m => populateIdIfNeeded(m, generateId _))
-    executeBatch(connection, insertSQL, populated.toList, (obj: M, ps: PreparedStatement) => prepInsert(obj))
-  }
-
-  def updateBatch(batch: Traversable[M]): Unit = {
-    executeBatch(connection, updateSQL, batch.toList, (obj: M, ps: PreparedStatement) => prepUpdate(obj))
+  override def save(obj: M, forceInsert: Boolean): M = {
+    if (forceInsert || !obj.persisted) {
+      val prepedObj = populateIdIfNeeded(obj)
+      executeUpdate(connection, insertSQL, prepInsert(prepedObj))
+    }
+    else {
+      executeUpdate(connection, updateSQL, prepUpdate(obj))
+    }
+    obj
   }
 }

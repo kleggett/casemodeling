@@ -31,8 +31,8 @@ trait MongoCrudDAOTest[ID, M <: Persistable[ID]] extends BaseTest with MongoSupp
 
     it("should force insert new data properly") {
       val model = testData()
-      dao.populateIdIfNeeded(model, dao.generateId _)
-      val actual = dao.save(model, true)
+      dao.populateIdIfNeeded(model)
+      val actual = dao.save(model, forceInsert = true)
       assert(actual != null)
       assert(actual.persisted)
       findEquals(actual)
@@ -40,8 +40,8 @@ trait MongoCrudDAOTest[ID, M <: Persistable[ID]] extends BaseTest with MongoSupp
     }
 
     it("should update existing data properly") {
-      val existing = existingData
-      val update = dao.populateIdIfNeeded(updateData(), () => { existing.id.get })
+      existingData
+      val update = dao.populateIdIfNeeded(updateData())
       val actual = dao.save(update)
       assert(actual != null)
       assert(actual.persisted)

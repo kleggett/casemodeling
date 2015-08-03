@@ -32,9 +32,9 @@ trait DBCaches[M]
 
   def cacheQuery[K](cacheName: String, key: K, q: (K) => Option[M]): Option[M] = {
     getFromCache(cacheName, key).orElse({
-      val x = q(key)
-      x.foreach(addToCache(cacheName, key, _))
-      x
+      val result = q(key)
+      result.foreach(addToCache(cacheName, key, _))
+      result
     })
   }
 }

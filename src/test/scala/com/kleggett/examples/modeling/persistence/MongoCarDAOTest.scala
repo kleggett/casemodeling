@@ -20,7 +20,8 @@ class MongoCarDAOTest extends MongoCrudDAOTest[String, Car]
     Car(c.vin, "Toyota", "Avalon-X", 2)
   }
 
-  override val assertEquals: (Car, Car) => Unit = (actual, existing) => { actual === existing }
+  override val assertEquals: (Car, Car) => Unit =
+    (actual, existing) => { actual === existing }
 
   describe("MongoCrudDAO") {
     it should behave like mongoCrudDAO()
