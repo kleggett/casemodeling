@@ -6,13 +6,9 @@ package com.kleggett.persistence
  * @author K. Leggett
  * @since 1.0 (6/8/15 8:47 PM)
  */
-trait Persistable[ID <: Any]
+trait Persistable[ID]
 {
-  type ModelType <: Persistable[ID]
-
   def id: Option[ID]
-
-  def withId(newId: ID): ModelType
 
   def persisted: Boolean = id.isDefined
 }

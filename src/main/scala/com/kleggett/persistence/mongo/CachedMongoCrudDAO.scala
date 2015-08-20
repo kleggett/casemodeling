@@ -1,7 +1,7 @@
 package com.kleggett.persistence.mongo
 
-import com.kleggett.persistence.Persistable
 import com.kleggett.persistence.cache.DBCaches
+import com.kleggett.persistence.{HasCopy, Persistable}
 
 /**
  * This trait extends the [[MongoCrudDAO]] with caching support.
@@ -9,7 +9,7 @@ import com.kleggett.persistence.cache.DBCaches
  * @author K. Leggett
  * @since 1.0 (6/14/15 3:33 PM)
  */
-trait CachedMongoCrudDAO[ID, M <: Persistable[ID]] extends MongoCrudDAO[ID, M]
+trait CachedMongoCrudDAO[ID, M <: Persistable[ID] with HasCopy[ID, M]] extends MongoCrudDAO[ID, M]
 {
   this: DBCaches[M] =>
 

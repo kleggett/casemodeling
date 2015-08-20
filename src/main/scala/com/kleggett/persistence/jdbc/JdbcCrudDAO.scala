@@ -3,7 +3,7 @@ package com.kleggett.persistence.jdbc
 import java.sql.PreparedStatement
 
 import com.kleggett.db.util.ScalaSqlUtils._
-import com.kleggett.persistence.{CrudDAO, Persistable}
+import com.kleggett.persistence.{CrudDAO, HasCopy, Persistable}
 
 /**
  * This trait provides the implementations for the basic CRUD operations using JDBC.
@@ -11,7 +11,8 @@ import com.kleggett.persistence.{CrudDAO, Persistable}
  * @author K. Leggett
  * @since 1.0 (6/14/15 4:32 PM)
  */
-trait JdbcCrudDAO[ID, M <: Persistable[ID]] extends JdbcDAO[ID, M] with CrudDAO[ID, M]
+trait JdbcCrudDAO[ID, M <: Persistable[ID] with HasCopy[ID, M]]
+  extends JdbcDAO[ID, M] with CrudDAO[ID, M]
 {
   protected def insertSQL: String
 

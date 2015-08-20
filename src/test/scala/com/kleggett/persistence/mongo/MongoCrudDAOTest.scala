@@ -1,7 +1,7 @@
 package com.kleggett.persistence.mongo
 
 import com.kleggett.BaseTest
-import com.kleggett.persistence.Persistable
+import com.kleggett.persistence.{HasCopy, Persistable}
 
 /**
  * This is the basis for all mongo-based crud DAO tests. It takes care of running
@@ -11,7 +11,7 @@ import com.kleggett.persistence.Persistable
  * @author K. Leggett
  * @since 1.0 (6/14/15 10:41 PM)
  */
-trait MongoCrudDAOTest[ID, M <: Persistable[ID]] extends BaseTest with MongoSupport
+trait MongoCrudDAOTest[ID, M <: Persistable[ID] with HasCopy[ID, M]] extends BaseTest with MongoSupport
 {
   def dao: MongoCrudDAO[ID, M]
 

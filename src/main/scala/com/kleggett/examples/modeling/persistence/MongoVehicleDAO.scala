@@ -10,7 +10,7 @@ import org.mongojack.internal.MongoJackModule
  * @author K. Leggett
  * @since 1.0 (6/14/15 5:04 PM)
  */
-trait MongoVehicleDAO[V <: Vehicle] extends MongoCrudDAO[String, V]
+trait MongoVehicleDAO[V <: Vehicle[V]] extends MongoCrudDAO[String, V]
 {
   // In real life this is probably a custom ObjectMapper w/scala support
   implicit val objMapper = MongoJackModule.configure(new ObjectMapper())

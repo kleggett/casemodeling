@@ -1,6 +1,6 @@
 package com.kleggett.persistence.mongo
 
-import com.kleggett.persistence.{CrudDAO, Persistable}
+import com.kleggett.persistence.{CrudDAO, HasCopy, Persistable}
 
 /**
  * This trait provides the implementations for the basic CRUD operations using MongoDB.
@@ -8,7 +8,8 @@ import com.kleggett.persistence.{CrudDAO, Persistable}
  * @author K. Leggett
  * @since 1.0 (6/14/15 2:52 PM)
  */
-trait MongoCrudDAO[ID, M <: Persistable[ID]] extends MongoDAO[ID, M] with CrudDAO[ID, M]
+trait MongoCrudDAO[ID, M <: Persistable[ID] with HasCopy[ID, M]]
+  extends MongoDAO[ID, M] with CrudDAO[ID, M]
 {
   override def getById(id: ID): Option[M] = MongoDAO.queryById(collection, id)
 

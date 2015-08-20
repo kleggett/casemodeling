@@ -6,7 +6,8 @@ package com.kleggett.persistence
  * @author K. Leggett
  * @since 1.0 (6/13/15 5:05 PM)
  */
-trait CrudDAO[ID, M <: Persistable[ID]] {
+trait CrudDAO[ID, M <: Persistable[ID] with HasCopy[ID, M]]
+{
   def getById(id: ID): Option[M]
 
   def deleteById(id: ID): Int
@@ -16,7 +17,7 @@ trait CrudDAO[ID, M <: Persistable[ID]] {
   protected[persistence] def populateIdIfNeeded(obj: M): M = {
     obj.id match {
       case Some(_) => obj
-      case None => obj.withId(generateId).asInstanceOf[M]
+      case None => obj.withId(generateId)
     }
   }
 

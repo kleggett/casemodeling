@@ -1,6 +1,6 @@
 package com.kleggett.examples.modeling.model
 
-import com.kleggett.persistence.Persistable
+import com.kleggett.persistence.{HasCopy, Persistable}
 
 import scala.util.Random
 
@@ -10,10 +10,9 @@ import scala.util.Random
  * @author K. Leggett
  * @since 1.0 (6/7/15 4:55 PM)
  */
-sealed trait Vehicle extends Persistable[String]
+sealed trait Vehicle[V <: Vehicle[V]] extends Persistable[String]
+  with HasCopy[String, V]
 {
-  override type ModelType <: Vehicle
-
   override def id: Option[String] = Option(vin)
 
   def vin: String
@@ -29,10 +28,8 @@ object Vehicle
 }
 
 case class Car(vin: String, make: String, model: String, nDoors: Int)
-  extends Vehicle
+  extends Vehicle[Car]
 {
-  override type ModelType = Car
-
   override def withId(newId: String): Car = copy(vin = newId)
 }
 
